@@ -9,11 +9,6 @@ from selenium.webdriver.support.ui import WebDriverWait # available since 2.4.0
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
-'''
-Error without amount of days in April. Should be 30, is 31
-The first possible date is April 17 and the last possible date is April 31
-'''
-
 #Function implemented to allow loading animations to finish prior to executing subsequent commands
 def wait(howLong):
     start = time.time()
