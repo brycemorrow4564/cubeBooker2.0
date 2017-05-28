@@ -24,37 +24,6 @@ from WaitWrapper import general_driver_wait
 #Import Custom Settings (Global Variables)
 import settings
 
-'''
-#parses using standard datetime.date format and then returns as 2 digit integer to ease comparison
-def last_day_of_month(any_day):
-    next_month = any_day.replace(day=28) + datetime.timedelta(days=4)  # this will never fail
-    return int((next_month - datetime.timedelta(days=next_month.day))[-2:])
-'''
-
-'''
-def book_cubes(cubes_to_book, ordered_key_set, user_Manager): 
-    if len(cubes_to_book) == 0: 
-        return 
-    active_user = user_Manager.get_active_user()
-    while True: 
-        if active_user.can_book_cube(): 
-            num_bookings = User.MAX_BOOKINGS - active_user.get_num_bookings_left()
-            for i in range(num_bookings): 
-                key = ordered_key_set.pop()
-                if key is not None: 
-                    target_cube_id = cubes_to_book[key].get_cube_id()
-                    cube_button_to_click = settings.driver.find_element_by_id(target_cube_id)
-                    cube_to_click.click()
-            active_user.zero_num_bookings() #set users num_bookings instance variable to 0 
-            #all cubes have been booked, now input user information to complete bookings
-            input_user_info(active_user)
-        else: 
-            if user_Manager.has_next_user(): 
-                active_user = user_Manager.next_user() 
-            else: 
-                break 
-    return 
-'''
 
 #returns integer 1-12 representing the current selected month jan-dec
 def get_selected_month():
@@ -114,13 +83,13 @@ def run_booker():
         days_to_book += [i+1 for i in xrange(MAX_NUM_BOOKING_DAYS - len(days_to_book))]
 
     #DEBUG
-    sf = True
+    count = 0
 
     #Perform booking logic for each inividual day
     for curr_day in days_to_book:
         #DEBUG conditional
-        if sf: 
-            sf = False 
+        if count < 2: 
+            count += 1 
             continue 
 
         ensure_correct_calendar_loc(curr_day, days_to_book[0]) #ensure driver is on correct calendar month 
@@ -138,6 +107,16 @@ def run_booker():
 
 def main():
     settings.setup() #setup driver and globals
+
+    #test for table scrolling functionality
+    scroll_id = 's-lc-rm-scrolltb'
+    table = settings.driver.find_element_by_id(scroll_id)
+
+
+
+
+
+
     try:
         run_booker()
     except Exception as e:

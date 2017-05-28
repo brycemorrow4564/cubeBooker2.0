@@ -33,10 +33,15 @@ class BookingWizard:
     def cube_id_to_datetime_object(self, cube_title):
         regex = re.compile('.*?(\d*):(\d*\s*)([^\s]+).*?, .*?, ([^\s]+) (.*?), (.*)') 
         datetime_data = regex.findall(cube_title)[0] #('10', '30', 'am', 'February', '4', '2017')
+        hour = -1
+        if int(datetime_data[0]) == 12: 
+            hour = 0 if datetime_data[2].lower() == 'am' else 12
+        else:  
+            hour = int(datetime_data[0]) if datetime_data[2].lower() == 'am' else int(datetime_data[0]) + 12
         return datetime.datetime(int(datetime_data[5]), #year 
                                 self.month_num_from_name(datetime_data[3]), #month
                                 int(datetime_data[4]), #day
-                                int(datetime_data[0]) if datetime_data[2].lower() == 'am' else int(datetime_data[0]) + 12, #hour adjusted for am/pm
+                                hour, #hour 
                                 int(datetime_data[1]) #minutes
                                 )   
 

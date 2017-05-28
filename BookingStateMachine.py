@@ -5,6 +5,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
+import time
 
 import settings 
 
@@ -15,24 +16,38 @@ class BookingStateMachine:
         self.cubes_to_book = cubes_to_book
         self.ordered_keys = sorted(cubes_to_book)
 
+
     def clear_slot_selections(self): 
-        remove_btn_container = settings.driver.find_element_by_id('s-lc-rm-datetime')
-        remove_btns = remove_btn_container.find_elements_by_xpath('.//a')
-        if remove_btns is not None and len(remove_btns) == 0: 
-            #recursively call function after removing single button to avoid staleness
-            remove_btns[0].click()
-            self.clear_slot_selections()
+        remove_btn_class = 'fa-trash-o'
+        remove_btn_children = settings.driver.find_elements_by_class_name(remove_btn_class)
+        print "here: " + str(remove_btn_children)
+        if len(remove_btn_children) != 0:
+            #there are remove buttons to click
+            remove_btn_children[0].find_element_by_xpath('..').click()
+            time.sleep(.3)
+            self.clear_slot_selections() #recurse to avoid staleness since icons change location
+
 
     #In click state, BSM must ensure it can locate and click all buttons to book cubes for a given active user
     def click_state(self, active_user): 
         clicked_btn_class = 'lc_rm_t'
-        for i in xrange(active_user.get_num_bookings_left()): 
-            key = self.ordered_keys.pop(0)
+        num_bookings = active_user.get_num_bookings_left()
+        num_keys = len(self.ordered_keys)
+        #we shallow copy this bc we must make sure all buttons clicked before removing corresponding keys from actual object
+        shallow_keys = list(self.ordered_keys)
+        for i in xrange(min(num_keys, num_bookings)): 
+            key = shallow_keys.pop(0)
             cube_to_book = self.cubes_to_book[key]
             cube_id = cube_to_book.get_cube_id()
             general_driver_wait(EC.element_to_be_clickable, By.ID, cube_id) #ensure time slot is in view and clickable
             time_slot = settings.driver.find_element_by_id(cube_id)
+
+            #scroll into view? 
+            settings.driver.execute_script("arguments[0].scrollIntoView(true);", time_slot)
+            time.sleep(.5); 
+
             time_slot.click()
+            time.sleep(.3)
             currently_clicked = settings.driver.find_elements_by_class_name(clicked_btn_class)
             btn_clicked = False
             for btn in currently_clicked: 
@@ -41,9 +56,13 @@ class BookingStateMachine:
                     btn_clicked = True 
                     break 
             if not btn_clicked: 
+                print "we fucked up"
                 #we somehow failed to click the button, clear all current selections and recursively call click_state
                 self.clear_slot_selections()
                 self.click_state(active_user)
+        #all buttons correctly clicked, remove keys from list now
+        for key in shallow_keys: 
+            self.ordered_keys.remove(key)
 
 
     def start(self): 
@@ -51,7 +70,7 @@ class BookingStateMachine:
         while True: 
             self.click_state(active_user) #after click_state we are guaranteed to have clicked all desired slots 
             #Note: we do not decrement user booking count until request has been successfully submitted 
-            submit_state(self, active_user)
+            self.submit_state(active_user)
             
             
             
