@@ -9,10 +9,11 @@ from ProcessedBookingData import ProcessedBookingData
 import re
 
 ''' Class queries webpage, extracts information on all bookable cubes, 
-    and runs an algorithms to determine which cubes should be booked 
+    and runs an algorithm to determine which cubes should be booked 
     and returns this information to the user. All of the processing is
     handled in the constructor and the user retrieves the information 
-    with a call to get_cubes_to_book() '''
+    with a call to get_cubes_to_book() which can be performed immediately 
+    after the instantiation of a BookingWizard object. '''
 class BookingWizard: 
 
     def __init__(self, user_manager):
@@ -39,10 +40,10 @@ class BookingWizard:
         else:  
             hour = int(datetime_data[0]) if datetime_data[2].lower() == 'am' else int(datetime_data[0]) + 12
         return datetime.datetime(int(datetime_data[5]), #year 
-                                self.month_num_from_name(datetime_data[3]), #month
-                                int(datetime_data[4]), #day
-                                hour, #hour 
-                                int(datetime_data[1]) #minutes
+                                 self.month_num_from_name(datetime_data[3]), #month
+                                 int(datetime_data[4]), #day
+                                 hour, #hour 
+                                 int(datetime_data[1]) #minutes
                                 )   
 
     def gather_possible_bookings(self):

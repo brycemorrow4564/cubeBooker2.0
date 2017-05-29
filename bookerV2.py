@@ -9,6 +9,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
 
 #Class Imports 
 from BookableCube import BookableCube
@@ -35,7 +36,7 @@ def get_selected_month():
                 return int(month.get_attribute('value')) + 1 #offset by one since website represents months with integers 0-11 instead of 1-12
         except:
             pass 
-    #If we did not find the selected month at any point in the for loop raise an exception 
+    #If we did nots find the selected month at any point in the for loop raise an exception 
     raise Exception("Was not able to determine what the current selected month is")
 
 
@@ -70,8 +71,8 @@ def find_day_anchor_to_click(curr_day):
 
 
 def run_booker():
-    #users = [User('bam4564', '#Bryc3m0rr0w!'), User('lucaswa', '#E03c55a6!!!!!'), User('dmtrump', 'climb3r1!!')]
-    users = [User('bam4564', '#Bryc3m0rr0w!')] #DEBUG
+    users = [User('bam4564', 'Bryc3m0rr0w@'), User('lucaswa', '#E03c55a6!!!!!'), User('dmtrump', 'climb3r1!!')]
+    users = [User('bam4564', 'Bryc3m0rr0w@')] #DEBUG
     user_manager = UserManager(users)
 
     now = datetime.datetime.now()
@@ -107,16 +108,6 @@ def run_booker():
 
 def main():
     settings.setup() #setup driver and globals
-
-    #test for table scrolling functionality
-    scroll_id = 's-lc-rm-scrolltb'
-    table = settings.driver.find_element_by_id(scroll_id)
-
-
-
-
-
-
     try:
         run_booker()
     except Exception as e:

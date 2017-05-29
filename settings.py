@@ -7,7 +7,7 @@ def driver_setup():
     driver = webdriver.Firefox(executable_path=gecko_path)
     url = 'http://calendar.lib.unc.edu/booking/davishub'
     driver.get(url)
-    driver.set_window_size(1200, 900)
+    driver.set_window_size(1300, 900)
     return driver
 
 def setup(): 

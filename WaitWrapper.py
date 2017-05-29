@@ -12,3 +12,9 @@ import settings
     byValue  = 'lc_rm_a' '''
 def general_driver_wait(ecFunc, byAttrib, byValue):
     settings.wait.until(ecFunc((byAttrib, byValue)))
+
+''' same as general_driver_wait except for the fact that 
+    stall time is a parameter that the user passes in rather
+    than the value of a generic global variable.   '''
+def explicit_driver_wait(ecFunc, byAttric, byValue, wait_time): 
+    WebDriverWait(settings.driver, wait_time).until(ecFunc((byAttrib, byValue)))

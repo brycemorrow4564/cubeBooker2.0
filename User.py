@@ -22,6 +22,8 @@ class User:
 
     def decrement_num_bookings_left(self): 
         self.num_bookings_left -= 1
+        if self.num_bookings_left < 0: 
+            raise Exception("Decremented bookings below 0")
 
     def zero_num_bookings_left(self): 
         self.num_bookings_left = 0
