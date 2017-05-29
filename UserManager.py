@@ -33,6 +33,7 @@ class UserManager:
         if not self.has_next_user(): 
             raise Exception("There is no next user for this given day")
         self.active_user = users_left.pop(0)
+        return self.active_user
 
     def get_num_possible_bookings(self):
         return sum([user.get_num_bookings_left() for user in self.users_left] + [self.active_user.get_num_bookings_left()])

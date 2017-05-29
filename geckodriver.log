@@ -3154,3 +3154,9 @@ See /usr/include/servers/bootstrap_defs.h for the error codes.
 See /usr/include/servers/bootstrap_defs.h for the error codes.
 JavaScript error: http://calendar.lib.unc.edu/booking/davishub, line 1: TypeError: dataLayer[i] is undefined
 JavaScript error: http://calendar.lib.unc.edu/booking/davishub, line 1: TypeError: dataLayer[i] is undefined
+*************************
+A coding exception was thrown and uncaught in a Task.
+
+Full message: TypeError: NetworkError when attempting to fetch resource.
+Full stack: 
+*************************
