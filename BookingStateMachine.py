@@ -1,13 +1,15 @@
-from UserManager import UserManager
-from WaitWrapper import general_driver_wait
+import time 
 
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
-import time
+
+from UserManager import UserManager
+from WaitWrapper import general_driver_wait
 
 import settings 
+
 
 class BookingStateMachine: 
 
@@ -126,6 +128,7 @@ class BookingStateMachine:
         while True:
             self.click_state(active_user) #after click_state we are guaranteed to have clicked all desired slots 
             self.submit_state(active_user) #after submit_state we are guaranteed to have submitted our booking
+            self.calendar_manager.click_day() #This will refresh page and return us to correct booking day for next user
             #Break out of loop if there are no more users to book under
             if not self.user_manager.has_next_user():
                 break 

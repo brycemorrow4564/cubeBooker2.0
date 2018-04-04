@@ -1,5 +1,6 @@
 from User import User
 
+
 class UserManager: 
     '''object to represent a cycle of users. Each booking day, a 
     new user cycler object will be created since you can reserve 
@@ -11,7 +12,7 @@ class UserManager:
         for user in users: 
             if not isinstance(user, User): 
                 raise Exception("One or more of the elements in users was not a valid User Object")
-            user.reset_num_bookings_left() #ensure each user has correct number of max bookings remaining
+        user.reset_num_bookings_left() #ensure each user has correct number of max bookings remaining
         self.original_list = list(users) #used to reset user manager for each new day
         self.active_user = users.pop(0)
         self.users_left = users

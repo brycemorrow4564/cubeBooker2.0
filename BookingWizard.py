@@ -1,12 +1,16 @@
-#Library Imports
 import datetime
 import calendar
-import settings
+import re
 
-#Class Imports
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+
 from BookableCube import BookableCube
 from ProcessedBookingData import ProcessedBookingData
-import re
+from WaitWrapper import general_driver_wait
+
+import settings
+
 
 ''' Class queries webpage, extracts information on all bookable cubes, 
     and runs an algorithm to determine which cubes should be booked 
@@ -18,17 +22,28 @@ class BookingWizard:
 
     def __init__(self, user_manager):
         self.user_manager = user_manager 
+        
+
+    def run(self): 
+        try:
+            general_driver_wait(EC.element_to_be_clickable, By.CLASS_NAME, 'lc_rm_a') #wait until time slots are definitively clickable 
+        except: 
+            print('not lit')
+
         cube_booking_data = self.gather_possible_bookings()
         self.ordered_key_set = cube_booking_data.get_ordered_key_set()
         self.times_to_bookable_cube_dict = cube_booking_data.get_times_to_bookable_cube_dict()
         self.cubes_to_book = self.determine_cubes_to_book()
+        return self.cubes_to_book
 
     def get_cubes_to_book(self):
         return self.cubes_to_book
 
+
     #given name of month returns integer 1-12 
     def month_num_from_name(self, month):
         return {datetime.date(2017, i, 1).strftime('%B').lower():i for i in range(1,13)}[month.lower()]
+
 
     #cube_title in general form: 'Cube 7, 10:30am to 11:00am, Saturday, February 4, 2017'
     def cube_id_to_datetime_object(self, cube_title):
@@ -45,6 +60,7 @@ class BookingWizard:
                                  hour, #hour 
                                  int(datetime_data[1]) #minutes
                                 )   
+
 
     def gather_possible_bookings(self):
         #Gather all buttons representing open cubes

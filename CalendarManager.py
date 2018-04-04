@@ -1,6 +1,9 @@
-import settings
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+
 from WaitWrapper import general_driver_wait
 
+import settings
 
 class CalendarManager: 
 
@@ -8,14 +11,23 @@ class CalendarManager:
     next_btn_class = 'ui-datepicker-next'
     calendar_widget_class = 'ui-datepicker-calendar'
 
-    def __init__(self, first_day_to_book): 
+    def __init__(self, first_day_to_book, curr_day): 
         self.first_day_to_book = first_day_to_book
+        self.curr_day = curr_day
+
+    
+    def get_curr_day(self): 
+        return self.get_curr_day
 
 
-    def click_day(self, day_to_click): 
+    def set_curr_day(self, new_curr_day): 
+        self.curr_day = new_curr_day
+
+
+    def click_day(self): 
         settings.driver.get(settings.main_page_url) #refresh page to ensure we are in the correct state
-        self.ensure_correct_calendar_loc(day_to_click) #ensure driver is on correct calendar month 
-        self.find_day_anchor_to_click(curr_day).click() #locate and click appropriate anchor element 
+        self.ensure_correct_calendar_loc() #ensure driver is on correct calendar month 
+        self.find_day_anchor_to_click().click() #locate and click appropriate anchor element 
     
 
     #returns integer 1-12 representing the current selected month jan-dec
@@ -31,19 +43,19 @@ class CalendarManager:
         raise Exception("Was not able to determine what the current selected month is") #unable to recover from this error 
 
 
-    def ensure_correct_calendar_loc(self, curr_book_day):
-        old_month_num = get_selected_month() #returns integer 1-12
-        if self.first_day_to_book > curr_book_day:
+    def ensure_correct_calendar_loc(self):
+        old_month_num = self.get_selected_month() #returns integer 1-12
+        if self.first_day_to_book > self.curr_day:
             settings.driver.find_element_by_class_name(CalendarManager.next_btn_class).click() #move calendar to next month
-            new_month_num = get_selected_month()
+            new_month_num = self.get_selected_month()
             if new_month_num == old_month_num:
-                self.click_day(curr_book_day) #the button click did not work and we did not advance. Restart state
+                self.click_day() #the button click did not work and we did not advance. Restart state
         
 
-    def find_day_anchor_to_click(self, curr_day):
+    def find_day_anchor_to_click(self):
         calendarWidget = settings.driver.find_element_by_class_name(CalendarManager.calendar_widget_class)
         possible_anchors = calendarWidget.find_elements_by_xpath('.//a') #gets all child anchor elements of calendar widget
         for anchor in possible_anchors:
-            if int(anchor.text) == curr_day: 
+            if int(anchor.text) == self.curr_day: 
                 return anchor
-        self.click_day(curr_day) #We did not find the desired anchor but we can recover from this by  resettings state
+        self.click_day() #We did not find the desired anchor but we can recover from this by  resettings state
